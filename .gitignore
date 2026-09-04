@@ -34,3 +34,6 @@ build/
 
 #environment variables
 .env
+
+#plan
+scope_plan.md
