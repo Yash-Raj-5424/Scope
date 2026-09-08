@@ -1,6 +1,6 @@
 package com.yash.Scope.project.enums;
 
-public enum ProjectStatus {
+public enum Status {
     PLANNING,
     ACTIVE,
     ON_HOLD,
