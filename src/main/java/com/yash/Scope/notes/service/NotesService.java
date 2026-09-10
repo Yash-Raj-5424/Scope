@@ -1,10 +1,14 @@
 package com.yash.Scope.notes.service;
 
+import com.yash.Scope.client.repository.ClientRepository;
+import com.yash.Scope.exception.ResourceNotFoundException;
 import com.yash.Scope.notes.dto.CreateNotesRequest;
 import com.yash.Scope.notes.dto.NotesResponse;
 import com.yash.Scope.notes.entity.Notes;
 import com.yash.Scope.notes.mapper.NotesMapper;
 import com.yash.Scope.notes.repository.NotesRepository;
+import com.yash.Scope.project.repository.ProjectRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,16 +17,37 @@ import org.springframework.stereotype.Service;
 public class NotesService {
 
     private final NotesRepository notesRepository;
+    private final ClientRepository clientRepository;
+    private final ProjectRepository projectRepository;
     private final NotesMapper notesMapper;
 
+    @Transactional
     public NotesResponse createNotes(CreateNotesRequest request){
 
-        // validate owner
-        if(!request.isValidOwner()){
-            throw new IllegalArgumentException("Only exactly one owner must be provided - client/project");
+        // ensure notes has only one owner
+        Long clientId = request.getClientId();
+        Long projectId = request.getProjectId();
+
+        boolean onlyOneOwner = (clientId != null) ^ (projectId != null);
+
+        if(!onlyOneOwner){
+            throw new IllegalArgumentException("Only one owner is allowed - client/project");
         }
 
-        Notes notes = notesMapper.toEntity(request);
+        // validate whether owner exists
+        if(clientId != null && !clientRepository.existsById(clientId)){
+            throw new ResourceNotFoundException("Client doesn't exist with id: " + clientId);
+        }
+        if(projectId != null && !projectRepository.existsById(projectId)){
+            throw new ResourceNotFoundException("Project doesn't exist with id: " + projectId);
+        }
+
+        Notes notes = notesMapper.toEntity(request);    // mapper only sets the non-entity fields
+
+        //set the entity fields manually
+        if(clientId != null)    notes.setClient(clientRepository.getReferenceById(clientId));
+        if(projectId != null)   notes.setProject(projectRepository.getReferenceById(projectId));
+
         notesRepository.save(notes);
 
         return notesMapper.toResponse(notes);

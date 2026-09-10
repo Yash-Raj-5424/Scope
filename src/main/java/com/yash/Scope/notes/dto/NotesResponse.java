@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NotesResponse {
 
+    private Long id;
     private String title;
     private String content;
     private Long clientId;

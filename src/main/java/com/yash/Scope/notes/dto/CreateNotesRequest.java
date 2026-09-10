@@ -15,8 +15,4 @@ public class CreateNotesRequest {
 
     private Long projectId;
 
-    public boolean isValidOwner(){
-        return (clientId != null) ^ (projectId != null); // want only one owner to exist
-    }
-
 }
