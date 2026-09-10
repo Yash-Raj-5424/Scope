@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @Builder
 public class ProjectResponse {
 
+    private Long id;
     private String name;
     private String description;
     private Long budget;

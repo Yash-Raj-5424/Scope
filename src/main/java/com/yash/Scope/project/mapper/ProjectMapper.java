@@ -13,6 +13,6 @@ public interface ProjectMapper {
 
     Project toEntity(CreateProjectRequest request);
     void updateProjectFromDto(UpdateProjectRequest updateRequest, @MappingTarget Project project);
-    ProjectResponse toResponse(Project client);
+    ProjectResponse toResponse(Project project);
 
 }

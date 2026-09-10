@@ -37,3 +37,6 @@ build/
 
 #plan
 scope_plan.md
+
+#decisions
+decisions.md
