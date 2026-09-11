@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
@@ -35,6 +37,24 @@ public class NotesController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(notesService.createNotes(null, projectId, request));  // pass null for clientId
+    }
+
+    @GetMapping("/notes/{id}")
+    public ResponseEntity<NotesResponse> getNotesById(@PathVariable Long id){
+
+        return ResponseEntity.ok(notesService.getNotesById(id));
+    }
+
+    @GetMapping("/clients/{clientId}/notes")
+    public ResponseEntity<List<NotesResponse>> getAllClientNotes(@PathVariable Long clientId){
+
+        return ResponseEntity.ok(notesService.getAllNotesByClientId(clientId));
+    }
+
+    @GetMapping("/projects/{projectId}/notes")
+    public ResponseEntity<List<NotesResponse>> getAllProjectNotes(@PathVariable Long projectId){
+
+        return ResponseEntity.ok(notesService.getAllNotesByProjectId(projectId));
     }
 
 

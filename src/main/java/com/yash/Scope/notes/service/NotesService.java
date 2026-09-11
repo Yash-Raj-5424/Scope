@@ -54,4 +54,39 @@ public class NotesService {
         return notesMapper.toResponse(notes);
     }
 
+
+    public NotesResponse getNotesById(Long notesId){
+
+        Notes notes = notesRepository.findById(notesId)
+                .orElseThrow(() -> new ResourceNotFoundException("Notes doesn't exist with id: " + notesId));
+
+        return notesMapper.toResponse(notes);
+    }
+
+    public List<NotesResponse> getAllNotesByClientId(Long clientId){
+
+        if(!clientRepository.existsById(clientId)){     // check whether client exists
+            throw new ResourceNotFoundException("Client doesn't exist with id: " + clientId);
+        }
+
+        List<Notes> notesList = notesRepository.findByClientIdOrderByCreatedAtDesc(clientId);   // collect all notes
+
+        return notesList.stream()
+                .map(notesMapper::toResponse)
+                .toList();
+    }
+
+    public List<NotesResponse> getAllNotesByProjectId(Long projectId){
+
+        if(!projectRepository.existsById(projectId)){
+            throw new ResourceNotFoundException("Project doesn't exist with id: " + projectId);
+        }
+
+        List<Notes> notesList = notesRepository.findByProjectIdOrderByCreatedAtDesc(projectId);
+
+        return notesList.stream()
+                .map(notesMapper::toResponse)
+                .toList();
+    }
+
 }
