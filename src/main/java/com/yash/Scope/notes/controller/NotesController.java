@@ -2,6 +2,7 @@ package com.yash.Scope.notes.controller;
 
 import com.yash.Scope.notes.dto.CreateNotesRequest;
 import com.yash.Scope.notes.dto.NotesResponse;
+import com.yash.Scope.notes.dto.UpdateNotesRequest;
 import com.yash.Scope.notes.service.NotesService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,22 @@ public class NotesController {
         return ResponseEntity.ok(notesService.getAllNotesByProjectId(projectId));
     }
 
+    @PutMapping("/notes/{id}")
+    public ResponseEntity<NotesResponse> updateNotes(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateNotesRequest updateNotesRequest){
 
+        return ResponseEntity.ok(notesService.updateNotes(id, updateNotesRequest));
+    }
+
+    @DeleteMapping("/notes/{id}")
+    public ResponseEntity<Void> deleteNotesById(@PathVariable Long id){
+
+        notesService.deleteNotesById(id);
+
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
 
 }

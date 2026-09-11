@@ -4,6 +4,7 @@ import com.yash.Scope.client.repository.ClientRepository;
 import com.yash.Scope.exception.ResourceNotFoundException;
 import com.yash.Scope.notes.dto.CreateNotesRequest;
 import com.yash.Scope.notes.dto.NotesResponse;
+import com.yash.Scope.notes.dto.UpdateNotesRequest;
 import com.yash.Scope.notes.entity.Notes;
 import com.yash.Scope.notes.mapper.NotesMapper;
 import com.yash.Scope.notes.repository.NotesRepository;
@@ -87,6 +88,26 @@ public class NotesService {
         return notesList.stream()
                 .map(notesMapper::toResponse)
                 .toList();
+    }
+
+    @Transactional
+    public NotesResponse updateNotes(Long id, UpdateNotesRequest request){
+
+        Notes notes = notesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Notes doesn't exist with id: " + id));
+
+        notesMapper.updateNotesFromDto(request, notes);
+
+        return notesMapper.toResponse(notes);
+    }
+
+    public void deleteNotesById(Long id){
+
+        if(!notesRepository.existsById(id)){
+            throw new ResourceNotFoundException("Notes doesn't exist with id: " + id);
+        }
+
+        notesRepository.deleteById(id);
     }
 
 }
