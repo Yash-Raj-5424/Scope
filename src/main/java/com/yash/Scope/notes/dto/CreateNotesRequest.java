@@ -11,8 +11,5 @@ public class CreateNotesRequest {
     @NotBlank(message = "Notes content cannot be blank")
     private String content;
 
-    private Long clientId;
-
-    private Long projectId;
 
 }

@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class NotesService {
@@ -22,13 +24,12 @@ public class NotesService {
     private final NotesMapper notesMapper;
 
     @Transactional
-    public NotesResponse createNotes(CreateNotesRequest request){
+    public NotesResponse createNotes(Long clientId, Long projectId, CreateNotesRequest request){
 
         // ensure notes has only one owner
-        Long clientId = request.getClientId();
-        Long projectId = request.getProjectId();
 
-        boolean onlyOneOwner = (clientId != null) ^ (projectId != null);
+        boolean onlyOneOwner = (clientId != null) ^ (projectId != null);    // even tho controller ensures only one owner
+        // passed, it is good to check here in case of direct service call/tests
 
         if(!onlyOneOwner){
             throw new IllegalArgumentException("Only one owner is allowed - client/project");
@@ -51,7 +52,6 @@ public class NotesService {
         notesRepository.save(notes);
 
         return notesMapper.toResponse(notes);
-
     }
 
 }

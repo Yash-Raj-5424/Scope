@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,5 +18,7 @@ public class NotesResponse {
     private String content;
     private Long clientId;
     private Long projectId;
+    private LocalDateTime createdAt;
+    private Boolean isPinned;
 
 }
