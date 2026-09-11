@@ -12,9 +12,6 @@ import java.time.LocalDateTime;
 @Builder
 public class ErrorResponse {
 
-    public static String test(){
-        return "hello";
-    }
     private LocalDateTime timestamp;
     private int status;
     private String error;
