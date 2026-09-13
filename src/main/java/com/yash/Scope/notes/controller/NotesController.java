@@ -76,4 +76,12 @@ public class NotesController {
                 .build();
     }
 
+    @PatchMapping("/notes/{id}/pinned")
+    public ResponseEntity<NotesResponse> setPinned(
+            @PathVariable Long id,
+            @RequestParam boolean isPinned){
+
+        return ResponseEntity.ok(notesService.setPinned(id, isPinned));
+    }
+
 }

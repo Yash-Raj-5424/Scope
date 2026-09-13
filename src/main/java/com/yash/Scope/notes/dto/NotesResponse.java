@@ -19,6 +19,6 @@ public class NotesResponse {
     private Long clientId;
     private Long projectId;
     private LocalDateTime createdAt;
-    private Boolean isPinned;
+    private Boolean pinned;
 
 }

@@ -29,7 +29,7 @@ public class Notes extends BaseEntity {
     @JoinColumn
     private Project project;
 
-    private Boolean isPinned = false;
+    private boolean pinned = false;
 
 
 }

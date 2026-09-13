@@ -110,4 +110,16 @@ public class NotesService {
         notesRepository.deleteById(id);
     }
 
+    @Transactional
+    public NotesResponse setPinned(Long id, boolean isPinned){
+
+        Notes notes = notesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Notes doesn't exist with id: " + id));
+
+        notes.setPinned(isPinned);
+        notesRepository.save(notes);
+
+        return notesMapper.toResponse(notes);
+    }
+
 }
