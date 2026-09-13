@@ -38,5 +38,8 @@ build/
 #plan
 scope_plan.md
 
-#decisions
-decisions.md
+#notes module decisions
+src/main/java/com/yash/Scope/notes/decisions.md
+
+#invoice module decisions
+src/main/java/com/yash/Scope/invoice/decisions.md
