@@ -2,6 +2,7 @@ package com.yash.Scope.invoice.controller;
 
 import com.yash.Scope.invoice.dto.CreateInvoiceRequest;
 import com.yash.Scope.invoice.dto.InvoiceResponse;
+import com.yash.Scope.invoice.dto.UpdateInvoiceRequest;
 import com.yash.Scope.invoice.service.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +38,22 @@ public class InvoiceController {
     public ResponseEntity<List<InvoiceResponse>> getAllInvoiceByClientId(@PathVariable Long clientId){
         return ResponseEntity
                 .ok(invoiceService.getAllInvoiceByClientId(clientId));
+    }
+
+    @PutMapping("/invoices/{id}")
+    public ResponseEntity<InvoiceResponse> updateInvoice(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateInvoiceRequest request
+            ){
+
+        return ResponseEntity
+                .ok(invoiceService.updateInvoice(id, request));
+    }
+
+    @DeleteMapping("/invoices/{id}")
+    public ResponseEntity<Void> deleteInvoiceById(@PathVariable Long id){
+        invoiceService.deleteInvoiceById(id);
+        return ResponseEntity
+                .noContent().build();
     }
 }

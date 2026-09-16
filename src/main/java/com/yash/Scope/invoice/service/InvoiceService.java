@@ -4,6 +4,7 @@ import com.yash.Scope.client.repository.ClientRepository;
 import com.yash.Scope.exception.ResourceNotFoundException;
 import com.yash.Scope.invoice.dto.CreateInvoiceRequest;
 import com.yash.Scope.invoice.dto.InvoiceResponse;
+import com.yash.Scope.invoice.dto.UpdateInvoiceRequest;
 import com.yash.Scope.invoice.entity.Invoice;
 import com.yash.Scope.invoice.mapper.InvoiceMapper;
 import com.yash.Scope.invoice.repository.InvoiceRepository;
@@ -78,6 +79,24 @@ public class InvoiceService {
                 .stream()
                 .map(invoiceMapper::toResponse)
                 .toList();
+    }
+
+    @Transactional
+    public InvoiceResponse updateInvoice(Long id, UpdateInvoiceRequest request){
+
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice doesn't exist with id: " + id));
+
+        invoiceMapper.updateInvoiceFromDto(request, invoice);
+        return invoiceMapper.toResponse(invoice);
+    }
+
+    public void deleteInvoiceById(Long id){
+        if(!invoiceRepository.existsById(id)){
+            throw new ResourceNotFoundException("Invoice doesn't exist with id: " + id);
+        }
+
+        invoiceRepository.deleteById(id);
     }
 
 }
