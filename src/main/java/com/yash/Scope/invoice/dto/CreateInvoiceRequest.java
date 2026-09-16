@@ -32,7 +32,7 @@ public class CreateInvoiceRequest {
     private Status status = Status.DRAFT; // keep default draft
 
     @AssertTrue(message = "dueDate must be on or after issueDate")
-    private boolean isValidDueDate(){
+    public boolean isValidDueDate(){
 
         return issueDate == null ||
                 dueDate == null ||

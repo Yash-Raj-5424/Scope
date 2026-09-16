@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class InvoiceService {
@@ -54,4 +56,28 @@ public class InvoiceService {
 
         return invoiceMapper.toResponse(invoice);
     }
+
+    public InvoiceResponse getInvoiceById(Long id){
+        return invoiceMapper
+                .toResponse(
+                        invoiceRepository
+                                .findById(id)
+                                .orElseThrow(() ->
+                                        new ResourceNotFoundException("Invoice doesn't exist with id: " + id))
+                );
+    }
+
+    public List<InvoiceResponse> getAllInvoiceByClientId(Long clientId){
+
+        if(!clientRepository.existsById(clientId)){
+            throw new ResourceNotFoundException("Client doesn't exist with id: " + clientId);
+        }
+
+        return invoiceRepository
+                .findByClientIdOrderByIssueDateDesc(clientId)
+                .stream()
+                .map(invoiceMapper::toResponse)
+                .toList();
+    }
+
 }

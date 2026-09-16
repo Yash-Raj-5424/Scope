@@ -7,24 +7,35 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/invoices")
+@RequestMapping("/api")
 public class InvoiceController {
 
     private final InvoiceService invoiceService;
 
-    @PostMapping
+    @PostMapping("/invoices")
     public ResponseEntity<InvoiceResponse> createInvoice(
             @Valid @RequestBody CreateInvoiceRequest request){
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(invoiceService.createInvoice(request));
+    }
+
+    @GetMapping("/invoices/{id}")
+    public ResponseEntity<InvoiceResponse> getInvoiceById(@PathVariable Long id){
+        return ResponseEntity
+                .ok(invoiceService.getInvoiceById(id));
+    }
+
+    @GetMapping("/clients/{clientId}/invoices")
+    public ResponseEntity<List<InvoiceResponse>> getAllInvoiceByClientId(@PathVariable Long clientId){
+        return ResponseEntity
+                .ok(invoiceService.getAllInvoiceByClientId(clientId));
     }
 }
