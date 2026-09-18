@@ -1,5 +1,6 @@
 package com.yash.Scope.project.service;
 
+import com.yash.Scope.client.repository.ClientRepository;
 import com.yash.Scope.exception.ResourceNotFoundException;
 import com.yash.Scope.project.dto.CreateProjectRequest;
 import com.yash.Scope.project.dto.ProjectResponse;
@@ -20,13 +21,23 @@ public class ProjectService {
 
     private final ProjectRepository projectRepository;
     private final ProjectMapper projectMapper;
+    private final ClientRepository clientRepository;
 
 
+    @Transactional
     public ProjectResponse createProject(CreateProjectRequest request){
 
-        Project project =  projectMapper.toEntity(request);
-        projectRepository.save(project);
+        Long clientId = request.getClientId();
 
+        if(clientId != null && !clientRepository.existsById(clientId)){ // if req carries clientId, it must be existing in db
+            throw new ResourceNotFoundException("Client doesn't exist with id: " + clientId);
+        }
+
+        Project project =  projectMapper.toEntity(request);
+
+        if(clientId != null)    project.setClient(clientRepository.getReferenceById(clientId));
+
+        projectRepository.save(project);
         return projectMapper.toResponse(project);
     }
 

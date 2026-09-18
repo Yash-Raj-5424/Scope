@@ -13,6 +13,8 @@ public class CreateProjectRequest {
     @NotBlank(message = "name is required")
     private String name;
 
+    private Long clientId;
+
     private String description;
 
     @NotNull(message = "Budget cannot be NULL")

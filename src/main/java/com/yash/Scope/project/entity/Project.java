@@ -23,7 +23,8 @@ public class Project extends BaseEntity {
 
     private String description;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "client_id", nullable = true)
     private Client client;
 
     private Long budget;
