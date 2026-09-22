@@ -6,6 +6,7 @@ import com.yash.Scope.invoice.dto.CreateInvoiceRequest;
 import com.yash.Scope.invoice.dto.InvoiceResponse;
 import com.yash.Scope.invoice.dto.UpdateInvoiceRequest;
 import com.yash.Scope.invoice.entity.Invoice;
+import com.yash.Scope.invoice.enums.Status;
 import com.yash.Scope.invoice.mapper.InvoiceMapper;
 import com.yash.Scope.invoice.repository.InvoiceRepository;
 import com.yash.Scope.project.repository.ProjectRepository;
@@ -13,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -99,4 +101,14 @@ public class InvoiceService {
         invoiceRepository.deleteById(id);
     }
 
+    @Transactional
+    public int markOverdueInvoices(){
+
+        List<Invoice> dueInvoices = invoiceRepository
+                .findByStatusAndDueDateLessThan(Status.SENT, LocalDate.now());
+
+        dueInvoices.forEach(dueInvoice -> dueInvoice.setStatus(Status.OVERDUE));
+
+        return dueInvoices.size();
+    }
 }
