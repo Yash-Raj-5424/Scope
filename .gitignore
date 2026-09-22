@@ -43,3 +43,6 @@ src/main/java/com/yash/Scope/notes/decisions.md
 
 #invoice module decisions
 src/main/java/com/yash/Scope/invoice/decisions.md
+
+#dashboard module decisions
+src/main/java/com/yash/Scope/dashboard/decisions.md

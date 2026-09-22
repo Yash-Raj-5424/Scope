@@ -14,7 +14,7 @@ import java.util.List;
 public class DashboardResponse {
 
     private long totalClients;
-    private long  activeProjects;
+    private long activeProjects;
     private long pendingInvoices;
     private long paidInvoices;
     private long overdueInvoices;
