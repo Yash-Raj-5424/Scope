@@ -1,6 +1,7 @@
 package com.yash.Scope.invoice.service;
 
 import com.yash.Scope.client.repository.ClientRepository;
+import com.yash.Scope.exception.ConflictException;
 import com.yash.Scope.exception.ResourceNotFoundException;
 import com.yash.Scope.invoice.dto.CreateInvoiceRequest;
 import com.yash.Scope.invoice.dto.InvoiceResponse;
@@ -89,6 +90,14 @@ public class InvoiceService {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice doesn't exist with id: " + id));
 
+        // if invoice is DRAFT and u send PAID in request, it should refuse
+        Status invoiceStatus = invoice.getStatus();
+
+        if(request.getStatus() == Status.PAID &&
+                invoiceStatus == Status.DRAFT
+        )
+            throw new IllegalArgumentException("Cannot mark DRAFT status as PAID");
+
         invoiceMapper.updateInvoiceFromDto(request, invoice);
         return invoiceMapper.toResponse(invoice);
     }
@@ -110,5 +119,20 @@ public class InvoiceService {
         dueInvoices.forEach(dueInvoice -> dueInvoice.setStatus(Status.OVERDUE));
 
         return dueInvoices.size();
+    }
+
+    @Transactional
+    public InvoiceResponse markAsPaid(Long id){
+
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice doesn't exist with id: " + id));
+
+        if(invoice.getStatus() == Status.DRAFT)
+            throw new IllegalArgumentException("DRAFT invoices can't be marked as PAID");
+        if(invoice.getStatus() == Status.PAID)
+            throw new ConflictException("Invoice already paid with id: " + id);
+
+        invoice.setStatus(Status.PAID);
+        return invoiceMapper.toResponse(invoice);
     }
 }

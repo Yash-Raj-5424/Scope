@@ -73,4 +73,19 @@ public class GlobalExceptionHandler {
                 .body(errorResponse);
     }
 
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(
+            ConflictException e, HttpServletRequest request
+    ){
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.CONFLICT.value())
+                        .error(HttpStatus.CONFLICT.getReasonPhrase())
+                        .message(e.getMessage())
+                        .path(request.getRequestURI())
+                        .build());
+    }
+
 }
