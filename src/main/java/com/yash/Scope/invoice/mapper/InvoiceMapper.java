@@ -13,6 +13,7 @@ public interface InvoiceMapper {
 
     @Mapping(target="client", ignore = true)
     @Mapping(target = "project", ignore = true)
+    @Mapping(target = "status", ignore = true)
     Invoice toEntity(CreateInvoiceRequest request);
 
     InvoiceResponse toResponse(Invoice invoice);
