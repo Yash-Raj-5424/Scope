@@ -48,6 +48,7 @@ public class InvoiceService {
         }
 
         Invoice invoice = invoiceMapper.toEntity(request);
+        invoice.setStatus(Status.DRAFT);    // force DRAFT on creation always
 
         //set the entity fields manually
         if(request.getClientId() != null)
@@ -119,12 +120,7 @@ public class InvoiceService {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice doesn't exist with id: " + id));
 
-        Status invoiceStatus = invoice.getStatus();
-
-        if(invoiceStatus == Status.PAID)
-            throw new ConflictException("Invoice with id: " + id + " already paid");
-        if(!invoiceStatus.canTransitionTo(Status.PAID))
-            throw new IllegalArgumentException("Cannot mark invoice: " + id + " as PAID");
+        validateTransition(invoice, Status.PAID);
 
         invoice.setStatus(Status.PAID);
         return invoiceMapper.toResponse(invoice);
@@ -136,15 +132,21 @@ public class InvoiceService {
         Invoice invoice = invoiceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Invoice doesn't exist with id: " + id));
 
-        Status invoiceStatus = invoice.getStatus();
-
-        if(invoiceStatus == Status.SENT)
-            throw new ConflictException("Invoice already sent {id: }" + id);
-
-        if(!invoiceStatus.canTransitionTo(Status.SENT))
-            throw new IllegalArgumentException("Cant mark invoice with id: " + id + " as SENT");
+        validateTransition(invoice, Status.SENT);
 
         invoice.setStatus(Status.SENT);
         return invoiceMapper.toResponse(invoice);
+    }
+
+    private void validateTransition(Invoice invoice, Status target){
+        Status invoiceStatus = invoice.getStatus();
+        if(invoiceStatus == target)
+            throw new ConflictException("Invoice with id: " + invoice.getId() + " already " + invoiceStatus);
+
+        if(!invoiceStatus.canTransitionTo(target)) {
+            throw new IllegalArgumentException(
+                    "Cannot transition invoice: " + invoice.getId() + " from " + invoiceStatus + " to " + target
+            );
+        }
     }
 }
