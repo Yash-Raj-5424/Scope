@@ -3,7 +3,9 @@ package com.yash.Scope.invoice.repository;
 import com.yash.Scope.invoice.entity.Invoice;
 import com.yash.Scope.invoice.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,6 +25,18 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
         long getTotal();
     }
 
-    List<Invoice> findByStatusAndDueDateLessThan(Status status, LocalDate dueDateBefore);
 
+    // use atomic conditional bulk update
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("""
+        update Invoice i
+            set i.status = :overdueStatus, i.updatedAt = CURRENT_TIMESTAMP
+                where i.status = :sentStatus
+                    and i.dueDate < :today
+    """)
+    int markInvoicesOverdue(
+            @Param("sentStatus") Status sentStatus,
+            @Param("overdueStatus") Status overdueStatus,
+            @Param("today") LocalDate today
+    );
 }

@@ -106,12 +106,11 @@ public class InvoiceService {
     @Transactional
     public int markOverdueInvoices(){
 
-        List<Invoice> dueInvoices = invoiceRepository
-                .findByStatusAndDueDateLessThan(Status.SENT, LocalDate.now());
-
-        dueInvoices.forEach(dueInvoice -> dueInvoice.setStatus(Status.OVERDUE));
-
-        return dueInvoices.size();
+        return invoiceRepository.markInvoicesOverdue(
+                Status.SENT,
+                Status.OVERDUE,
+                LocalDate.now()
+        );
     }
 
     @Transactional
