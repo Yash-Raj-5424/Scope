@@ -1,6 +1,5 @@
 package com.yash.Scope.invoice.dto;
 
-import com.yash.Scope.invoice.enums.Status;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 
@@ -28,8 +27,6 @@ public class CreateInvoiceRequest {
     private Long clientId;
 
     private Long projectId;
-
-    private Status status = Status.DRAFT; // keep default draft
 
     @AssertTrue(message = "dueDate must be on or after issueDate")
     public boolean isValidDueDate(){

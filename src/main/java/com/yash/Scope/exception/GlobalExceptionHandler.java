@@ -3,6 +3,7 @@ package com.yash.Scope.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -71,6 +72,37 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.internalServerError()
                 .body(errorResponse);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(
+            ConflictException e, HttpServletRequest request
+    ){
+
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.CONFLICT.value())
+                        .error(HttpStatus.CONFLICT.getReasonPhrase())
+                        .message(e.getMessage())
+                        .path(request.getRequestURI())
+                        .build());
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleOptimisticLock(
+            ObjectOptimisticLockingFailureException e,
+            HttpServletRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ErrorResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.CONFLICT.value())
+                        .error(HttpStatus.CONFLICT.getReasonPhrase())
+                        .message("Invoice was modified by a concurrent request, please retry")
+                        .path(request.getRequestURI())
+                        .build());
+
     }
 
 }

@@ -38,7 +38,7 @@ public class Invoice extends BaseEntity {
     private Status status;
 
     @Version
-    private Long version;
+    private Long version; // we chose optimistic locking for status transitions
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)

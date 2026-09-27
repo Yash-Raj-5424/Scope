@@ -50,10 +50,26 @@ public class InvoiceController {
                 .ok(invoiceService.updateInvoice(id, request));
     }
 
+    @PatchMapping("/invoices/{id}/paid")
+    public ResponseEntity<InvoiceResponse> markInvoiceAsPaid(
+            @PathVariable Long id){
+
+        return ResponseEntity.ok(invoiceService.markAsPaid(id));
+    }
+
+    @PatchMapping("/invoices/{id}/sent")
+    public ResponseEntity<InvoiceResponse> markInvoiceAsSent(
+            @PathVariable Long id
+    ){
+
+        return ResponseEntity.ok(invoiceService.markAsSent(id));
+    }
+
     @DeleteMapping("/invoices/{id}")
     public ResponseEntity<Void> deleteInvoiceById(@PathVariable Long id){
         invoiceService.deleteInvoiceById(id);
         return ResponseEntity
                 .noContent().build();
     }
+
 }

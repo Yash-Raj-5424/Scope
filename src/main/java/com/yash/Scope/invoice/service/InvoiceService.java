@@ -1,6 +1,7 @@
 package com.yash.Scope.invoice.service;
 
 import com.yash.Scope.client.repository.ClientRepository;
+import com.yash.Scope.exception.ConflictException;
 import com.yash.Scope.exception.ResourceNotFoundException;
 import com.yash.Scope.invoice.dto.CreateInvoiceRequest;
 import com.yash.Scope.invoice.dto.InvoiceResponse;
@@ -47,6 +48,7 @@ public class InvoiceService {
         }
 
         Invoice invoice = invoiceMapper.toEntity(request);
+        invoice.setStatus(Status.DRAFT);    // force DRAFT on creation always
 
         //set the entity fields manually
         if(request.getClientId() != null)
@@ -109,5 +111,41 @@ public class InvoiceService {
                 Status.OVERDUE,
                 LocalDate.now()
         );
+    }
+
+    @Transactional
+    public InvoiceResponse markAsPaid(Long id){
+
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice doesn't exist with id: " + id));
+
+        validateTransition(invoice, Status.PAID);
+
+        invoice.setStatus(Status.PAID);
+        return invoiceMapper.toResponse(invoice);
+    }
+
+    @Transactional
+    public InvoiceResponse markAsSent(Long id){
+
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Invoice doesn't exist with id: " + id));
+
+        validateTransition(invoice, Status.SENT);
+
+        invoice.setStatus(Status.SENT);
+        return invoiceMapper.toResponse(invoice);
+    }
+
+    private void validateTransition(Invoice invoice, Status target){
+        Status invoiceStatus = invoice.getStatus();
+        if(invoiceStatus == target)
+            throw new ConflictException("Invoice with id: " + invoice.getId() + " already " + invoiceStatus);
+
+        if(!invoiceStatus.canTransitionTo(target)) {
+            throw new IllegalArgumentException(
+                    "Cannot transition invoice: " + invoice.getId() + " from " + invoiceStatus + " to " + target
+            );
+        }
     }
 }

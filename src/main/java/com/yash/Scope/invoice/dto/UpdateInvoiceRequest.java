@@ -1,6 +1,5 @@
 package com.yash.Scope.invoice.dto;
 
-import com.yash.Scope.invoice.enums.Status;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -21,9 +20,6 @@ public class UpdateInvoiceRequest {
 
     @NotNull
     private LocalDate dueDate;
-
-    @NotNull
-    private Status status;
 
     @AssertTrue(message = "dueDate must be on or after issueDate")
     public boolean isValidDueDate(){
