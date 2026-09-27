@@ -30,7 +30,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice,Long> {
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("""
         update Invoice i
-            set i.status = :overdueStatus
+            set i.status = :overdueStatus, i.updatedAt = CURRENT_TIMESTAMP
                 where i.status = :sentStatus
                     and i.dueDate < :today
     """)
