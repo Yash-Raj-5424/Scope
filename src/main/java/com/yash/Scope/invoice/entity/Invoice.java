@@ -37,6 +37,9 @@ public class Invoice extends BaseEntity {
     @Column(nullable = false)
     private Status status;
 
+    @Version
+    private Long version;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
