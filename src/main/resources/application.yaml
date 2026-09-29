@@ -14,3 +14,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:the-default-jwt-secret-we-use-as-fallback}
+    expiration: 86400000
