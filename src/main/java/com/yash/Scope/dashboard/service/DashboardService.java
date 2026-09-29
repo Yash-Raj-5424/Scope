@@ -4,7 +4,6 @@ import com.yash.Scope.client.repository.ClientRepository;
 import com.yash.Scope.dashboard.dto.DashboardResponse;
 import com.yash.Scope.dashboard.dto.UpcomingDeadline;
 import com.yash.Scope.invoice.repository.InvoiceRepository;
-import com.yash.Scope.invoice.repository.InvoiceRepository.InvoiceStatusCount;
 import com.yash.Scope.project.entity.Project;
 import com.yash.Scope.project.repository.ProjectRepository;
 import com.yash.Scope.project.repository.ProjectRepository.ProjectStatusCount;
@@ -26,7 +25,7 @@ public class DashboardService {
     public DashboardResponse getDashboardSummary(){
 
         List<ProjectStatusCount> projectCounts = projectRepository.countGroupedByStatus();
-        List<InvoiceStatusCount> invoiceCounts = invoiceRepository.countGroupedByStatus();
+        List<InvoiceRepository.InvoiceStatusCount> invoiceCounts = invoiceRepository.countGroupedByStatus();
 
         // i'll consider invoices with DRAFT and SENT status as pending
         long pendingInvoices = countFor(invoiceCounts, com.yash.Scope.invoice.enums.Status.DRAFT)
@@ -62,10 +61,10 @@ public class DashboardService {
                 .sum();
     }
 
-    private long countFor(List<InvoiceStatusCount> counts, com.yash.Scope.invoice.enums.Status status) {
+    private long countFor(List<InvoiceRepository.InvoiceStatusCount> counts, com.yash.Scope.invoice.enums.Status status) {
         return counts.stream()
                 .filter(c -> c.getStatus() == status)
-                .mapToLong(InvoiceStatusCount::getTotal)
+                .mapToLong(InvoiceRepository.InvoiceStatusCount::getTotal)
                 .sum();
     }
 
@@ -76,4 +75,4 @@ public class DashboardService {
                 .deadline(project.getDeadline())
                 .build();
     }
-}
+    }
