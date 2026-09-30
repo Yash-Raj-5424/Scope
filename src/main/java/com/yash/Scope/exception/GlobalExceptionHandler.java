@@ -105,4 +105,20 @@ public class GlobalExceptionHandler {
 
     }
 
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleUnauthorizedException(
+            UnauthorizedException e,
+            HttpServletRequest request
+    ){
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.builder()
+                        .timestamp(LocalDateTime.now())
+                        .status(HttpStatus.UNAUTHORIZED.value())
+                        .error(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                        .message("Forbidden path")
+                        .path(request.getRequestURI())
+                        .build());
+    }
+
 }
